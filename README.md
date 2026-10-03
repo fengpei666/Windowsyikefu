@@ -3,7 +3,7 @@
 [![build](https://github.com/fengpei666/Windowsyikefu/actions/workflows/build.yml/badge.svg)](https://github.com/fengpei666/Windowsyikefu/actions/workflows/build.yml)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**逸创云商城系统** 配套的 Windows 桌面客服端。
+**易创云商城系统** 配套的 Windows 桌面客服端。
 
 商城系统负责商品、订单、访客会话等服务端能力，客服人员用本客户端在桌面上实时接待，把原本要在浏览器后台干的活搬进桌面：**多站点并行接待、系统通知上直接回复、订单与红包处理、托盘常驻后台收消息**。
 
