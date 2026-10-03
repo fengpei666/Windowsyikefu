@@ -1,0 +1,104 @@
+<Window x:Class="Windowsyikefu.Views.OrderSearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        Title="发送订单卡片"
+        Width="520" Height="520"
+        WindowStyle="None" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="#FFF3F3F5"
+        FontFamily="{StaticResource AppFont}"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="44" ResizeBorderThickness="0"
+                            CornerRadius="0" GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <!-- 半透明底：运行时开启系统毛玻璃后靠它透出来，和其它窗口保持一致 -->
+    <Border Background="#33FFFFFF" BorderBrush="#22000000" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏 -->
+            <Grid Grid.Row="0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <iconPacks:PackIconLucide Kind="Package" Width="15" Height="15"
+                                              Foreground="{StaticResource TextSecondaryBrush}"
+                                              VerticalAlignment="Center" Margin="0,0,9,0" />
+                    <TextBlock Text="发送订单卡片" FontSize="13.5" FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                </StackPanel>
+                <Button Style="{StaticResource CaptionCloseButton}"
+                        HorizontalAlignment="Right" Margin="0,6,8,0"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                        Click="Close_Click">
+                    <iconPacks:PackIconLucide Kind="X" Width="14" Height="14" />
+                </Button>
+            </Grid>
+
+            <!-- 搜索 -->
+            <StackPanel Grid.Row="1" Margin="22,4,22,14">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="TxtKeyword" Style="{StaticResource FlatTextBox}" MinHeight="40"
+                             Width="330" VerticalContentAlignment="Center"
+                             KeyDown="TxtKeyword_KeyDown" />
+                    <!-- 高度与左侧输入框齐平（40），不覆盖样式里的默认高度 -->
+                    <Button x:Name="BtnSearch" Content="搜索" Style="{StaticResource PrimaryButton}"
+                            Width="86" Height="40" Margin="10,0,0,0" Click="BtnSearch_Click" />
+                </StackPanel>
+                <TextBlock Text="可填订单 ID、订单号或下单时留的联系方式"
+                           FontSize="11" Margin="0,8,0,0"
+                           Foreground="{StaticResource TextSecondaryBrush}" />
+                <TextBlock x:Name="TxtStatus" FontSize="11.5" Margin="0,6,0,0"
+                           TextWrapping="Wrap"
+                           Foreground="{StaticResource TextSecondaryBrush}" />
+            </StackPanel>
+
+            <!-- 结果 -->
+            <Border Grid.Row="2" Margin="22,0,22,16" Background="White" CornerRadius="10"
+                    BorderBrush="#FFE6E7EA" BorderThickness="1">
+                <ListBox x:Name="ListResults" Background="Transparent" BorderThickness="0"
+                         Margin="6" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="4,7">
+                                <TextBlock Text="{Binding Title}" FontSize="12.5"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="{StaticResource TextPrimaryBrush}" />
+                                <TextBlock Text="{Binding Detail}" FontSize="11" Margin="0,3,0,0"
+                                           TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextSecondaryBrush}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <!-- 底部按钮栏：与设置窗口、其它弹窗统一 -->
+            <Border Grid.Row="3" Background="#B3FFFFFF" BorderBrush="#14000000"
+                    BorderThickness="0,1,0,0" Padding="22,12">
+                <Grid>
+                    <TextBlock x:Name="TxtHint" FontSize="11" VerticalAlignment="Center"
+                               HorizontalAlignment="Left" MaxWidth="300" TextWrapping="Wrap"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="取消" Style="{StaticResource GhostButton}" Width="80"
+                                Click="Close_Click" />
+                        <Button x:Name="BtnSend" Content="发送到会话" Style="{StaticResource PrimaryButton}"
+                                Width="120" Margin="10,0,0,0" Click="BtnSend_Click" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,86 @@
+<Window x:Class="Windowsyikefu.Views.RedpackSendWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        Title="发红包"
+        Width="400" SizeToContent="Height"
+        WindowStyle="None" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="#FFF3F3F5"
+        FontFamily="{StaticResource AppFont}"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="44" ResizeBorderThickness="0"
+                            CornerRadius="0" GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <!-- 半透明底：运行时开启系统毛玻璃后靠它透出来，和其它窗口保持一致 -->
+    <Border Background="#33FFFFFF" BorderBrush="#22000000" BorderThickness="1">
+        <StackPanel>
+            <!-- 标题栏 -->
+            <Grid Height="44">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <iconPacks:PackIconLucide Kind="Wallet" Width="15" Height="15"
+                                              Foreground="#E06C1F"
+                                              VerticalAlignment="Center" Margin="0,0,9,0" />
+                    <TextBlock Text="发红包给用户" FontSize="13.5" FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                </StackPanel>
+                <Button Style="{StaticResource CaptionCloseButton}"
+                        HorizontalAlignment="Right" Margin="0,6,8,0"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                        Click="Close_Click">
+                    <iconPacks:PackIconLucide Kind="X" Width="14" Height="14" />
+                </Button>
+            </Grid>
+
+            <Border Height="1" Background="#FFE6E7EA" />
+
+            <StackPanel Margin="24,18,24,18">
+                <!-- 余额 -->
+                <Border Background="#FFF7F8FA" CornerRadius="10" Padding="14,12"
+                        BorderBrush="#FFE6E7EA" BorderThickness="1">
+                    <Grid>
+                        <TextBlock Text="红包余额" FontSize="12" VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextSecondaryBrush}" />
+                        <TextBlock x:Name="TxtBalance" Text="—" FontSize="16" FontWeight="SemiBold"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   Foreground="#E06C1F" />
+                    </Grid>
+                </Border>
+
+                <!-- 金额 -->
+                <TextBlock Text="红包金额" FontSize="12" Margin="0,18,0,8"
+                           Foreground="{StaticResource TextSecondaryBrush}" />
+                <Grid>
+                    <TextBox x:Name="TxtMoney" Style="{StaticResource FlatTextBox}" MinHeight="42"
+                             FontSize="15" VerticalContentAlignment="Center" Padding="14,0,34,0"
+                             KeyDown="TxtMoney_KeyDown" />
+                    <TextBlock Text="元" FontSize="12" IsHitTestVisible="False"
+                               HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+                </Grid>
+
+                <TextBlock x:Name="TxtHint" Text="金额 0.01 ~ 5000 元，从客服红包余额扣除"
+                           FontSize="11" Margin="0,8,0,0" TextWrapping="Wrap"
+                           Foreground="{StaticResource TextSecondaryBrush}" />
+            </StackPanel>
+
+            <!-- 底部按钮栏：与设置窗口、其它弹窗统一 -->
+            <Border Background="#B3FFFFFF" BorderBrush="#14000000" BorderThickness="0,1,0,0"
+                    Padding="22,12">
+                <Grid>
+                    <Button Content="取消" Style="{StaticResource GhostButton}" Width="80"
+                            HorizontalAlignment="Left" Click="Close_Click" />
+                    <Button x:Name="BtnSend" Content="发红包" Style="{StaticResource PrimaryButton}"
+                            Width="110" HorizontalAlignment="Right" Click="BtnSend_Click" />
+                </Grid>
+            </Border>
+        </StackPanel>
+    </Border>
+</Window>

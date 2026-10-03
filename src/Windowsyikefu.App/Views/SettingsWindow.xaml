@@ -1,0 +1,308 @@
+<Window x:Class="Windowsyikefu.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        Title="设置" Width="560" Height="680"
+        WindowStyle="None" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="#FFF3F3F5"
+        FontFamily="{StaticResource AppFont}"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="44" ResizeBorderThickness="0"
+                            CornerRadius="0" GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <!-- 半透明底：运行时会开启系统毛玻璃，靠它透出来（失败则退回不透明浅灰） -->
+    <Border Background="#33FFFFFF" BorderBrush="#22000000" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ==================== 标题栏 ==================== -->
+            <Grid Grid.Row="0" Background="Transparent">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="22,0,0,0">
+                    <iconPacks:PackIconLucide Kind="Settings" Width="15" Height="15"
+                                              Foreground="{StaticResource TextSecondaryBrush}"
+                                              VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBlock Text="设置" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                </StackPanel>
+                <Button x:Name="BtnClose" Style="{StaticResource CaptionCloseButton}"
+                        HorizontalAlignment="Right" Margin="0,6,8,0"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                        Click="BtnCancel_Click">
+                    <iconPacks:PackIconLucide Kind="X" Width="14" Height="14" />
+                </Button>
+            </Grid>
+
+            <!-- ==================== 设置内容 ==================== -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Padding="22,16,22,4">
+                <StackPanel>
+
+                    <!-- ====== 消息提醒 ====== -->
+                    <Border Style="{StaticResource SettingCard}">
+                        <StackPanel>
+                            <TextBlock Text="消息提醒" Style="{StaticResource SectionTitle}"
+                                       Margin="0,0,0,14" />
+
+                            <Grid>
+                                <TextBlock Text="弹出 Windows 系统通知" Style="{StaticResource RowLabel}" />
+                                <CheckBox x:Name="ChkToast" Style="{StaticResource ToggleSwitch}"
+                                          HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <Grid Margin="0,15,0,0">
+                                <TextBlock Text="新消息提示音" Style="{StaticResource RowLabel}" />
+                                <CheckBox x:Name="ChkSound" Style="{StaticResource ToggleSwitch}"
+                                          HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====== 接收设置 ====== -->
+                    <Border Style="{StaticResource SettingCard}">
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="接收设置" Style="{StaticResource SectionTitle}"
+                                           VerticalAlignment="Center" />
+                                <Border HorizontalAlignment="Right" Padding="8,2" CornerRadius="9"
+                                        Background="#1A07C160">
+                                    <TextBlock x:Name="TxtPollValue" Text="3 秒" FontSize="11"
+                                               Foreground="{StaticResource BrandHoverBrush}" />
+                                </Border>
+                            </Grid>
+
+                            <TextBlock Text="后台轮询新消息的间隔。越短越及时，也越费电和流量。"
+                                       Style="{StaticResource HintText}" Margin="0,6,0,12" />
+
+                            <Slider x:Name="SldPoll" Style="{StaticResource SettingSlider}"
+                                    Minimum="2" Maximum="30" TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    ValueChanged="SldPoll_ValueChanged" />
+
+                            <Grid Margin="2,2,2,0">
+                                <TextBlock Text="2 秒" FontSize="10"
+                                           Foreground="{StaticResource TextSecondaryBrush}" />
+                                <TextBlock Text="30 秒" FontSize="10" HorizontalAlignment="Right"
+                                           Foreground="{StaticResource TextSecondaryBrush}" />
+                            </Grid>
+
+                            <Border Height="1" Background="#14000000" Margin="0,16,0,15" />
+
+                            <!--
+                                低频轮询：客户端 IP 是浮动的、没法在 CDN 上加白名单时，
+                                把请求频率降下来 + 打散节奏是最有效、也最简单的防拉黑手段。
+                            -->
+                            <Grid>
+                                <StackPanel MaxWidth="330" HorizontalAlignment="Left">
+                                    <TextBlock Text="低频轮询（防拉黑）" Style="{StaticResource RowLabel}" />
+                                    <TextBlock Text="拉长所有轮询间隔并加随机抖动，请求量减少一大半；对方 CDN 若按访问频率拦截，建议开启"
+                                               Style="{StaticResource HintText}" Margin="0,3,0,0" />
+                                </StackPanel>
+                                <CheckBox x:Name="ChkLowFrequency" Style="{StaticResource ToggleSwitch}"
+                                          HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <Border Height="1" Background="#14000000" Margin="0,15,0,15" />
+
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="暂停接收消息" Style="{StaticResource RowLabel}" />
+                                    <TextBlock Text="暂停后不轮询、不弹通知，仍保持登录"
+                                               Style="{StaticResource HintText}" Margin="0,3,0,0" />
+                                </StackPanel>
+                                <CheckBox x:Name="ChkPaused" Style="{StaticResource ToggleSwitch}"
+                                          HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====== 启动与关闭 ====== -->
+                    <Border Style="{StaticResource SettingCard}">
+                        <StackPanel>
+                            <TextBlock Text="启动与关闭" Style="{StaticResource SectionTitle}"
+                                       Margin="0,0,0,14" />
+
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="开机自动启动" Style="{StaticResource RowLabel}" />
+                                    <TextBlock Text="开机后静默驻留托盘，不弹出主界面"
+                                               Style="{StaticResource HintText}" Margin="0,3,0,0" />
+                                </StackPanel>
+                                <CheckBox x:Name="ChkAutoStart" Style="{StaticResource ToggleSwitch}"
+                                          HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <Grid Margin="0,15,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="关闭窗口时最小化到托盘" Style="{StaticResource RowLabel}" />
+                                    <TextBlock Text="关闭后继续在后台接收消息，从托盘退出才会真正结束"
+                                               Style="{StaticResource HintText}" Margin="0,3,0,0" />
+                                </StackPanel>
+                                <CheckBox x:Name="ChkCloseToTray" Style="{StaticResource ToggleSwitch}"
+                                          HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====== 快捷回复 ====== -->
+                    <Border Style="{StaticResource SettingCard}">
+                        <StackPanel>
+                            <TextBlock Text="快捷回复" Style="{StaticResource SectionTitle}"
+                                       Margin="0,0,0,4" />
+                            <TextBlock Text="显示在输入框上方的短语，点击即可插入到消息中"
+                                       Style="{StaticResource HintText}" Margin="0,0,0,12" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="TxtNewReply" Style="{StaticResource FlatTextBox}"
+                                         MinHeight="36" MaxLength="120"
+                                         KeyDown="TxtNewReply_KeyDown" />
+                                <Button Grid.Column="1" Content="添加" Style="{StaticResource GhostButton}"
+                                        Height="34" Width="70" Margin="8,0,0,0"
+                                        Click="BtnAddReply_Click" />
+                            </Grid>
+
+                            <ItemsControl x:Name="ListReplies" Margin="0,12,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#80FFFFFF" CornerRadius="6" Padding="11,7"
+                                                Margin="0,0,0,6">
+                                            <Grid>
+                                                <TextBlock Text="{Binding}" FontSize="12"
+                                                           TextWrapping="Wrap"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                                           Margin="0,0,34,0" VerticalAlignment="Center" />
+                                                <Button Style="{StaticResource SmallIconButton}"
+                                                        HorizontalAlignment="Right"
+                                                        Tag="{Binding}" Click="BtnDeleteReply_Click"
+                                                        ToolTip="删除该短语">
+                                                    <iconPacks:PackIconLucide Kind="Trash2"
+                                                                              Width="14" Height="14" />
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock x:Name="TxtReplyEmpty" Text="还没有快捷回复短语"
+                                       Style="{StaticResource HintText}" Margin="2,4,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====== 防 CDN 拦截 ====== -->
+                    <Border Style="{StaticResource SettingCard}">
+                        <StackPanel>
+                            <TextBlock Text="防 CDN 拦截（可选）" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="填一行自定义请求头当「暗号」，让 CDN 按它放行；客户端 IP 会变也不受影响。留空表示不改。"
+                                       Style="{StaticResource HintText}" Margin="0,6,0,10" />
+
+                            <TextBox x:Name="TxtCustomHeaders" Style="{StaticResource FlatTextBox}"
+                                     AcceptsReturn="True" TextWrapping="Wrap"
+                                     MinHeight="54" MaxHeight="96"
+                                     VerticalScrollBarVisibility="Auto"
+                                     FontFamily="Consolas" FontSize="12"
+                                     VerticalContentAlignment="Top" Padding="10,8"
+                                     ToolTip="每行一条，例如：X-Kefu-Key: my-secret-2026" />
+
+                            <Button x:Name="BtnGenHeader" Content="随机生成一个暗号"
+                                    Style="{StaticResource GhostButton}" Height="30"
+                                    HorizontalAlignment="Left" Margin="0,8,0,0"
+                                    Click="BtnGenHeader_Click" />
+
+                            <Border Height="1" Background="#14000000" Margin="0,12,0,11" />
+
+                            <TextBlock Text="CDN 那边怎么配" Style="{StaticResource RowLabel}" />
+                            <TextBlock Margin="0,4,0,0"
+                                       Style="{StaticResource HintText}"
+                                       Text="在 CDN / WAF 控制台找「访问控制」「防护例外」「白名单」这类设置，加一条规则：请求头 X-Kefu-Key 等于上面的暗号 → 跳过 CC 防护 / 不拦截。这样带暗号的请求直接放行，不用管 IP。" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ====== 账号 ====== -->
+                    <Border Style="{StaticResource SettingCard}">
+                        <StackPanel>
+                            <TextBlock Text="当前账号" Style="{StaticResource SectionTitle}"
+                                       Margin="0,0,0,12" />
+
+                            <TextBlock Text="接口地址" Style="{StaticResource HintText}" />
+                            <TextBlock x:Name="TxtApiUrl" FontSize="12" TextWrapping="Wrap"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,3,0,10" />
+
+                            <TextBlock Text="APP ID" Style="{StaticResource HintText}" />
+                            <TextBlock x:Name="TxtAppId" FontSize="12" TextWrapping="Wrap"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,3,0,14" />
+
+                            <Button x:Name="BtnRebind" Content="更换绑定账号"
+                                    Style="{StaticResource DangerButton}" Height="32"
+                                    HorizontalAlignment="Left" Click="BtnRebind_Click"
+                                    ToolTip="清除当前凭证并重新启动绑定流程" />
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- ==================== 底部操作栏 ==================== -->
+            <Border Grid.Row="2" Background="#B3FFFFFF" BorderBrush="#14000000"
+                    BorderThickness="0,1,0,0" Padding="22,12">
+                <Grid>
+                    <!--
+                        版本号 + 检查更新：按「不显眼」的要求做成一枚很轻的文字按钮，
+                        跟版本号排在一起，不特意找不会注意到。
+                    -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock x:Name="TxtFooterHint" FontSize="11" VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextSecondaryBrush}" />
+
+                        <Button x:Name="BtnCheckUpdate" Margin="10,0,0,0" Cursor="Hand"
+                                Click="BtnCheckUpdate_Click" ToolTip="检查是否有新版本">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <TextBlock x:Name="TxtCheck" Text="检查更新" FontSize="11"
+                                               Foreground="{StaticResource TextSecondaryBrush}" />
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="TxtCheck" Property="Foreground"
+                                                    Value="{StaticResource BrandHoverBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="TxtCheck" Property="Opacity" Value="0.5" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <TextBlock x:Name="TxtUpdateState" FontSize="11" Margin="8,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextSecondaryBrush}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="取消" Style="{StaticResource GhostButton}" Width="88"
+                                Click="BtnCancel_Click" />
+                        <Button Content="保存" Style="{StaticResource PrimaryButton}" Width="98"
+                                Margin="10,0,0,0" Click="BtnSave_Click" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

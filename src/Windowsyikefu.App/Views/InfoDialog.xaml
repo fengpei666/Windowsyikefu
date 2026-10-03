@@ -1,0 +1,64 @@
+<Window x:Class="Windowsyikefu.Views.InfoDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        Title="详情"
+        Width="440" SizeToContent="Height"
+        WindowStyle="None" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="#FFF3F3F5"
+        FontFamily="{StaticResource AppFont}"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="44" ResizeBorderThickness="0"
+                            CornerRadius="0" GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <!-- 半透明底：运行时开启系统毛玻璃后靠它透出来，和其它窗口保持一致 -->
+    <Border Background="#33FFFFFF" BorderBrush="#22000000" BorderThickness="1">
+        <StackPanel>
+            <!-- 标题栏 -->
+            <Grid Height="44">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <iconPacks:PackIconLucide x:Name="IconTitle" Kind="Info"
+                                              Width="15" Height="15"
+                                              Foreground="{StaticResource TextSecondaryBrush}"
+                                              VerticalAlignment="Center" Margin="0,0,9,0" />
+                    <TextBlock x:Name="TxtTitle" FontSize="13.5" FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                </StackPanel>
+                <Button Style="{StaticResource CaptionCloseButton}"
+                        HorizontalAlignment="Right" Margin="0,6,8,0"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                        Click="Close_Click">
+                    <iconPacks:PackIconLucide Kind="X" Width="14" Height="14" />
+                </Button>
+            </Grid>
+
+            <Border Height="1" Background="#FFE6E7EA" />
+
+            <!-- 键值行 -->
+            <ScrollViewer MaxHeight="430" VerticalScrollBarVisibility="Auto"
+                          Padding="24,16,24,16">
+                <StackPanel x:Name="Body" />
+            </ScrollViewer>
+
+            <!-- 底部按钮栏：与设置窗口、其它弹窗统一 -->
+            <Border Background="#B3FFFFFF" BorderBrush="#14000000" BorderThickness="0,1,0,0"
+                    Padding="24,10">
+                <Grid>
+                    <TextBlock x:Name="TxtHint" FontSize="11" VerticalAlignment="Center"
+                               TextWrapping="Wrap" MaxWidth="280" HorizontalAlignment="Left"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
+                    <Button Content="关闭" Style="{StaticResource PrimaryButton}"
+                            Width="88" HorizontalAlignment="Right" Click="Close_Click" />
+                </Grid>
+            </Border>
+        </StackPanel>
+    </Border>
+</Window>

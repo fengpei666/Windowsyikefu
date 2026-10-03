@@ -1,0 +1,22 @@
+# ---------- 构建产物 ----------
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# ---------- 发布 / 安装包（体积大，由 build-setup.ps1 生成，不入库） ----------
+dist/
+installer/*.exe
+
+# ---------- Visual Studio ----------
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ---------- 其他 ----------
+*.log
+_shot.png
