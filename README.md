@@ -99,11 +99,18 @@ easykefu://bind?api_url=https://example.com/api&app_id=xxx&app_secret=yyy
 
 ## 安装使用
 
-普通用户不需要自己编译，直接下载安装包即可：
+普通用户不需要自己编译，直接下载即可：
 
-1. 打开 [Releases 页面](https://github.com/fengpei666/Windowsyikefu/releases/latest) 下载 `kefu_setup.exe`
-2. 双击安装（安装包已自带 .NET 运行时，无需另外配置环境）
-3. 首次启动填写商城后台「APP 接入管理」生成的凭证，详见下方[使用说明](#使用说明)
+1. 打开 [Releases 页面](https://github.com/fengpei666/Windowsyikefu/releases/latest)
+2. 按需下载：
+
+   | 文件 | 说明 |
+   | --- | --- |
+   | `kefu_setup.exe` | 安装包（推荐）：双击安装，自动创建开始菜单与桌面快捷方式 |
+   | `Windowsyikefu.exe` | 免安装单文件版：放到任意目录直接运行 |
+
+3. 两个版本都已自带 .NET 运行时，不需要另外安装任何环境
+4. 首次启动填写商城后台「APP 接入管理」生成的凭证，详见下方[使用说明](#使用说明)
 
 ## 从源码构建
 
