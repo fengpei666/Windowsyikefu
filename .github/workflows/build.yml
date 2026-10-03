@@ -98,23 +98,36 @@ jobs:
           }
 
       - name: 创建 GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            installer/kefu_setup.exe
-            dist/Windowsyikefu.exe
-          generate_release_notes: true
-          draft: false
-          body: |
-            ## 易客服 Windows 客户端 ${{ github.ref_name }}
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ github.ref_name }}"
 
-            | 下载哪个 | 说明 |
-            | --- | --- |
-            | `kefu_setup.exe` | **安装包（推荐）**：双击安装，自动创建开始菜单与桌面快捷方式，可从控制面板卸载 |
-            | `Windowsyikefu.exe` | 免安装单文件版：放到任意目录直接运行，适合放 U 盘随身带 |
+          $lines = @(
+            '## 易客服 Windows 客户端',
+            '',
+            '| 下载哪个 | 说明 |',
+            '| --- | --- |',
+            '| `kefu_setup.exe` | 安装包（推荐）：双击安装，自动创建开始菜单与桌面快捷方式，可从控制面板卸载 |',
+            '| `Windowsyikefu.exe` | 免安装单文件版：放到任意目录直接运行，适合放 U 盘随身带 |',
+            '',
+            '两个版本都已自带 .NET 运行时，不需要另外安装任何环境。',
+            '',
+            '首次启动会要求填写商城后台「APP 接入管理」生成的三项凭证；也可以从后台绑定页点「打开桌面端」一键唤起并自动绑定。',
+            '',
+            '完整变更记录见 [CHANGELOG.md](https://github.com/fengpei666/Windowsyikefu/blob/master/CHANGELOG.md)。'
+          )
+          $lines -join "`n" | Set-Content -Path notes.md -Encoding UTF8
 
-            两个版本都已自带 .NET 运行时，**不需要另外安装任何环境**。
+          $assets = @('installer/kefu_setup.exe', 'dist/Windowsyikefu.exe')
 
-            首次启动会要求填写商城后台「APP 接入管理」生成的三项凭证；也可以从后台绑定页点「打开桌面端」一键唤起并自动绑定。
-
-            完整变更记录见 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)。
+          # release 已存在（重建 tag 的情况）就更新说明与资产，否则新建
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release edit $tag --title $tag --notes-file notes.md
+            gh release upload $tag @assets --clobber
+          } else {
+            gh release create $tag @assets --title $tag --notes-file notes.md
+          }
+          Write-Host "Release $tag 已就绪"
