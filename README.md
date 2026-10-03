@@ -1,5 +1,8 @@
 # 易客服 · Windows 客户端
 
+[![build](https://github.com/fengpei666/Windowsyikefu/actions/workflows/build.yml/badge.svg)](https://github.com/fengpei666/Windowsyikefu/actions/workflows/build.yml)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **逸创云商城系统** 配套的 Windows 桌面客服端。
 
 商城系统负责商品、订单、访客会话等服务端能力，客服人员用本客户端在桌面上实时接待，把原本要在浏览器后台干的活搬进桌面：**多站点并行接待、系统通知上直接回复、订单与红包处理、托盘常驻后台收消息**。
@@ -94,7 +97,15 @@ easykefu://bind?api_url=https://example.com/api&app_id=xxx&app_secret=yyy
 
 ---
 
-## 快速开始
+## 安装使用
+
+普通用户不需要自己编译，直接下载安装包即可：
+
+1. 打开 [Releases 页面](https://github.com/fengpei666/Windowsyikefu/releases/latest) 下载 `kefu_setup.exe`
+2. 双击安装（安装包已自带 .NET 运行时，无需另外配置环境）
+3. 首次启动填写商城后台「APP 接入管理」生成的凭证，详见下方[使用说明](#使用说明)
+
+## 从源码构建
 
 ```powershell
 git clone https://github.com/fengpei666/Windowsyikefu.git
@@ -102,6 +113,9 @@ cd Windowsyikefu
 
 # 编译并运行（Debug）
 dotnet run --project src\Windowsyikefu.App
+
+# 运行单元测试
+dotnet test
 ```
 
 也可以直接用 Visual Studio 打开 `Windowsyikefu.Desktop.sln` 后按 F5。
@@ -213,8 +227,11 @@ Windowsyikefu.Desktop.sln
 │   ├── ViewModels/        列表项模型、图片工具
 │   ├── Views/             主窗口、绑定、设置、转发、订单搜索、发红包、信息弹窗
 │   └── App.xaml(.cs)      启动流程、单实例、Deep Link、通知激活处理
+├── tests/Windowsyikefu.Tests/   单元测试（Deep Link 解析、接口签名）
+├── .github/workflows/     GitHub Actions：编译测试 + 打 tag 自动发布
 ├── installer/             Inno Setup 安装包脚本
 ├── build-setup.ps1        一键发布 + 打包
+├── CHANGELOG.md           更新日志
 └── global.json            .NET SDK 版本锁定
 ```
 
@@ -279,4 +296,6 @@ Windowsyikefu.Desktop.sln
 
 ## 许可证
 
-本项目暂未指定开源许可证。如需开源分发，请先补充 `LICENSE` 文件。
+[MIT](LICENSE) © 2026 fengpei666
+
+可自由用于商业项目，保留版权声明即可。

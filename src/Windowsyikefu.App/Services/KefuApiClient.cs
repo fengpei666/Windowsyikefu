@@ -125,7 +125,7 @@ public sealed class KefuApiClient : IDisposable
 
     // ---------------------------------------------------------------- 签名
 
-    private string Sign(IDictionary<string, string> parameters)
+    internal string Sign(IDictionary<string, string> parameters)
     {
         var keys = parameters.Keys
             .Where(k => !string.Equals(k, "sign", StringComparison.Ordinal))

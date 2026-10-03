@@ -1,0 +1,17 @@
+# 默认按文本处理，仓库内统一换成 LF，避免跨平台协作时的换行符噪音
+* text=auto
+
+# 二进制文件：禁止做换行符与编码转换
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.exe binary
+*.dll binary
+*.pdb binary
+*.zip binary
+*.7z binary
+
+# 这些文件 diff 意义不大，折叠起来减少干扰
+packages.lock.json -diff

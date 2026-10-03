@@ -57,14 +57,24 @@ public static class DeepLinkParser
         info.RawUrl = text;
 
         string query;
+        var isProtocolLink = false;
         var schemeIdx = text.IndexOf("://", StringComparison.Ordinal);
         if (schemeIdx > 0)
         {
             // 形如 <scheme>://<path>?<query>
             var scheme = text[..schemeIdx].Trim().ToLowerInvariant();
-            if (!IsValidScheme(scheme)) return false;
-            info.Scheme = scheme;
-            query = text[(schemeIdx + 3)..];
+            if (IsValidScheme(scheme))
+            {
+                isProtocolLink = true;
+                info.Scheme = scheme;
+                query = text[(schemeIdx + 3)..];
+            }
+            else
+            {
+                // 前缀不是合法协议名（例如直接粘贴的 api_url=https://… 没做 URL 编码），
+                // 这时不能当成协议链接丢掉，整串就是 query。
+                query = text;
+            }
         }
         else
         {
@@ -82,7 +92,7 @@ public static class DeepLinkParser
         {
             var hIdx = query.IndexOf('#');
             if (hIdx >= 0) query = query[(hIdx + 1)..];
-            else if (schemeIdx > 0) return false; // 协议链接但完全没有参数
+            else if (isProtocolLink) return false; // 协议链接但完全没有参数
         }
 
         // 去掉残留的 fragment（?a=1#b）

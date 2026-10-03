@@ -55,4 +55,9 @@
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
   </ItemGroup>
 
+  <!-- 允许测试项目访问 internal 成员（如签名算法），便于单元测试 -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Windowsyikefu.Tests" />
+  </ItemGroup>
+
 </Project>
