@@ -45,11 +45,13 @@ jobs:
             exit 1
           }
 
+      # 这里不能用 --no-build：走 sln 构建时产物落在 bin\x64\Release，
+      # 而直接对项目跑 test 时产物落在 bin\Release，加了它会找不到测试程序集。
       - name: 单元测试
         shell: pwsh
         run: |
           $out = dotnet test tests/Windowsyikefu.Tests/Windowsyikefu.Tests.csproj `
-                   -c Release --no-build --nologo --verbosity normal 2>&1
+                   -c Release --nologo --verbosity normal 2>&1
           $code = $LASTEXITCODE
           $out | ForEach-Object { Write-Host $_ }
           if ($code -ne 0) {
