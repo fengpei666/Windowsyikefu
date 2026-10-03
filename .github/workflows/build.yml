@@ -26,14 +26,38 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: 还原依赖
-        run: dotnet restore Windowsyikefu.Desktop.sln
+      - name: 环境信息
+        run: dotnet --info
 
-      - name: 编译
-        run: dotnet build Windowsyikefu.Desktop.sln -c Release --no-restore
+      # 注意：这里故意不拆出单独的 restore 步骤、也不加 --no-restore。
+      # 本项目 Release 配置是 SelfContained，按 Debug 语义做的还原不会带运行时包，
+      # 缺了它 build 会失败；交给 build 自己还原最稳。
+      - name: 编译（Release）
+        shell: pwsh
+        run: |
+          $out = dotnet build Windowsyikefu.Desktop.sln -c Release --nologo 2>&1
+          $code = $LASTEXITCODE
+          $out | ForEach-Object { Write-Host $_ }
+          if ($code -ne 0) {
+            $out | Select-String -Pattern 'error|MSB\d{4}|NETSDK\d{4}' |
+              Select-Object -First 15 |
+              ForEach-Object { Write-Host "::error title=BuildFailure::$($_.Line.Trim())" }
+            exit 1
+          }
 
       - name: 单元测试
-        run: dotnet test tests/Windowsyikefu.Tests/Windowsyikefu.Tests.csproj -c Release --no-build --verbosity normal
+        shell: pwsh
+        run: |
+          $out = dotnet test tests/Windowsyikefu.Tests/Windowsyikefu.Tests.csproj `
+                   -c Release --no-build --nologo --verbosity normal 2>&1
+          $code = $LASTEXITCODE
+          $out | ForEach-Object { Write-Host $_ }
+          if ($code -ne 0) {
+            $out | Select-String -Pattern 'FAIL|失败' |
+              Select-Object -First 15 |
+              ForEach-Object { Write-Host "::error title=TestFailure::$($_.Line.Trim())" }
+            exit 1
+          }
 
   # ---------------------------------------------------------------- 打 tag 时出安装包并发布
   release:
@@ -59,7 +83,17 @@ jobs:
         shell: pwsh
 
       - name: 发布自包含程序并生成安装包
-        run: pwsh -ExecutionPolicy Bypass -File .\build-setup.ps1
+        shell: pwsh
+        run: |
+          $out = pwsh -ExecutionPolicy Bypass -File .\build-setup.ps1 2>&1
+          $code = $LASTEXITCODE
+          $out | ForEach-Object { Write-Host $_ }
+          if ($code -ne 0) {
+            $out | Select-String -Pattern 'error|错误|MSB\d{4}|NETSDK\d{4}' |
+              Select-Object -First 15 |
+              ForEach-Object { Write-Host "::error title=PackageFailure::$($_.Line.Trim())" }
+            exit 1
+          }
 
       - name: 创建 GitHub Release
         uses: softprops/action-gh-release@v2
