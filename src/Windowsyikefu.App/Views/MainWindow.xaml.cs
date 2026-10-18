@@ -935,34 +935,14 @@ public partial class MainWindow : Window
                 return;
             }
 
-            if (info.Force)
-            {
-                MessageBox.Show(this,
-                    UpdateService.BuildMessage(info),
-                    $"必须更新到 {info.Version}",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            // 统一用自家的更新窗口：带版本对比、更新内容和下载进度，比系统弹框更像同一个程序
+            var ready = new UpdateDialog(info) { Owner = this }.ShowDialog() == true;
+            if (!ready) return;
 
-                if (UpdateService.OpenDownload(info.DownloadUrl!))
-                {
-                    // 强制更新：下载页打开后直接退出。
-                    // 必须先置 _forceClose，否则会走「关闭到托盘」那条路，等于没退。
-                    _forceClose = true;
-                    Application.Current.Shutdown();
-                }
-                else
-                {
-                    _tray.ShowBalloon("需要更新", $"请手动下载新版本：{info.DownloadUrl}");
-                }
-
-                return;
-            }
-
-            var result = MessageBox.Show(this,
-                UpdateService.BuildMessage(info),
-                $"发现新版本 {info.Version}",
-                MessageBoxButton.OKCancel, MessageBoxImage.Information);
-
-            if (result == MessageBoxResult.OK) UpdateService.OpenDownload(info.DownloadUrl!);
+            // 对话框里已经把安装程序拉起来了，这里退出就行，让安装包能覆盖文件。
+            // 必须先置 _forceClose，否则会走「关闭到托盘」那条路，等于没退。
+            _forceClose = true;
+            Application.Current.Shutdown();
         }
         catch
         {

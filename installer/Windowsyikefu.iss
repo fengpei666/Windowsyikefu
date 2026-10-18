@@ -46,6 +46,10 @@ ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequired=admin
 ; 安装前自动关掉正在运行的旧版本，避免文件被占用
 CloseApplications=yes
+; 装完再把它拉起来：客户端内点「立即下载」是静默升级，靠这条自动回到新版
+RestartApplications=yes
+; 让安装包认得本程序的单实例互斥体，升级时能准确定位旧进程
+AppMutex=Global\WindowsYiKeFu_SingleInstance
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"

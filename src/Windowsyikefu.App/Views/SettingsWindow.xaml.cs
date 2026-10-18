@@ -132,8 +132,8 @@ public partial class SettingsWindow : Window
     private bool _checkingUpdate;
 
     /// <summary>
-    /// 「检查更新」：问 GitHub Releases 有没有新版本，有就把更新说明摆出来，
-    /// 用户确认后打开安装包下载地址。结果只写按钮旁边的小字，不额外弹提示。
+    /// 「检查更新」：问 GitHub Releases 有没有新版本，有就打开更新窗口，
+    /// 用户点下载后打开安装包地址。进度只写按钮旁边的小字，不额外打扰。
     /// </summary>
     private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
     {
@@ -155,24 +155,15 @@ public partial class SettingsWindow : Window
 
             TxtUpdateState.Text = $"发现新版本 {info.Version}";
 
-            var result = MessageBox.Show(this,
-                UpdateService.BuildMessage(info),
-                info.Force ? $"请更新到 {info.Version}" : $"发现新版本 {info.Version}",
-                info.Force ? MessageBoxButton.OK : MessageBoxButton.OKCancel,
-                MessageBoxImage.Information);
+            // 和其它入口共用同一个更新窗口，避免一处系统弹框、一处自绘窗口
+            var ready = new UpdateDialog(info) { Owner = this }.ShowDialog() == true;
+            if (!ready) return;
 
-            if (!info.Force && result != MessageBoxResult.OK) return;
+            // 安装程序已启动：退出程序让出文件，装完它会自动把新版拉起来
+            TxtUpdateState.Text = "正在安装新版本…";
 
-            if (UpdateService.OpenDownload(info.DownloadUrl!))
-            {
-                TxtUpdateState.Text = "已打开下载页面";
-            }
-            else
-            {
-                TxtUpdateState.Text = "无法打开下载地址";
-                MessageBox.Show(this, $"请手动下载：{info.DownloadUrl}", "下载新版本",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            if (Owner is MainWindow main) main.ForceClose();
+            Application.Current.Shutdown();
         }
         catch
         {
