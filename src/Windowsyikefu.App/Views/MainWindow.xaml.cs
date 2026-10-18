@@ -912,7 +912,7 @@ public partial class MainWindow : Window
     /// 进程序后自动查一次更新。
     /// 普通更新：可以「稍后再说」；强制更新：只有「立即下载」，打开下载页后退出程序，
     /// 必须装上新版才能继续用。
-    /// 网络不通 / 接口返回异常时静默跳过，绝不能因此挡住正常使用。
+    /// 网络不通 / GitHub 访问不了时静默跳过，绝不能因此挡住正常使用。
     /// </summary>
     private async Task CheckUpdateOnStartupAsync()
     {
@@ -966,7 +966,7 @@ public partial class MainWindow : Window
         }
         catch
         {
-            // 网站访问不了、超时、返回不是预期格式：一律当没有更新，正常使用
+            // GitHub 访问不了、超时、返回不是预期格式：一律当没有更新，正常使用
         }
     }
 

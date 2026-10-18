@@ -82,7 +82,7 @@ easykefu://bind?api_url=https://example.com/api&app_id=xxx&app_secret=yyy
 
 - 在线 / 离线状态切换（访客侧可见）
 - 快捷回复短语，点击即插入输入框
-- 在线检查新版本
+- 在线检查新版本（直连 GitHub Releases，不需要自建更新服务器）
 
 ---
 
@@ -145,6 +145,29 @@ powershell -ExecutionPolicy Bypass -File .\build-setup.ps1
 > 打包需要 [Inno Setup 6](https://jrsoftware.org/isinfo.php)：`winget install --id JRSoftware.InnoSetup -e`
 
 发新版时只要改 `src\Windowsyikefu.App\Windowsyikefu.App.csproj` 里的 `<Version>`，脚本会自动同步。
+
+### 发版与自动更新
+
+客户端的更新信息全部来自 **GitHub Releases**，不需要自建更新服务器。
+
+发一个版本的完整流程：
+
+1. 在 `CHANGELOG.md` 顶部加一段 `## [1.1.0] - 2026-10-18`，写清这次改了什么
+2. 把 `src\Windowsyikefu.App\Windowsyikefu.App.csproj` 里的 `<Version>` 改成同样的号
+3. 提交后打 tag 推上去：
+
+```powershell
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+工作流会自动编译、测试、打包并创建 Release：**正文取 CHANGELOG 对应版本的段落**，附件是 `kefu_setup.exe` 与 `Windowsyikefu.exe`。
+
+客户端启动 3 秒后自动检查一次，也可以随时在「设置 → 检查更新」手动检查；有新版本就弹出更新说明，确认后用浏览器下载安装包。
+
+**强制更新**：tag 写成 `v1.1.0-force`，或者发版后把 Release 标题改成 `[强制] v1.1.0`。客户端会提示必须更新，打开下载页后直接退出，不装新版就没法继续用。
+
+> 更新信息与安装包都在 GitHub 上，客户端需要能访问 `api.github.com` 和 `github.com`。网络受限时检查会静默失败，不影响正常接待。
 
 ---
 

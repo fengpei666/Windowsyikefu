@@ -132,8 +132,8 @@ public partial class SettingsWindow : Window
     private bool _checkingUpdate;
 
     /// <summary>
-    /// 「检查更新」：请求云端的 app_update.php，有新版本就把更新说明 / 公告摆出来，
-    /// 用户确认后打开服务端下发的下载地址。结果只写按钮旁边的小字，不额外弹提示。
+    /// 「检查更新」：问 GitHub Releases 有没有新版本，有就把更新说明摆出来，
+    /// 用户确认后打开安装包下载地址。结果只写按钮旁边的小字，不额外弹提示。
     /// </summary>
     private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
     {
@@ -176,7 +176,8 @@ public partial class SettingsWindow : Window
         }
         catch
         {
-            TxtUpdateState.Text = "检查失败，请检查网络";
+            // 更新信息在 GitHub 上，国内网络不一定通，提示写具体点省得用户瞎猜
+            TxtUpdateState.Text = "检查失败，请确认能访问 GitHub";
         }
         finally
         {

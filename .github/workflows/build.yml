@@ -102,32 +102,36 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # tag 形如 v1.2.0；写成 v1.2.0-force 表示这次是强制更新
           $tag = "${{ github.ref_name }}"
+          $version = $tag -replace '^v', '' -replace '-force$', ''
+          $force = $tag -match '-force$'
 
-          $lines = @(
-            '## 易客服 Windows 客户端',
-            '',
-            '| 下载哪个 | 说明 |',
-            '| --- | --- |',
-            '| `kefu_setup.exe` | 安装包（推荐）：双击安装，自动创建开始菜单与桌面快捷方式，可从控制面板卸载 |',
-            '| `Windowsyikefu.exe` | 免安装单文件版：放到任意目录直接运行，适合放 U 盘随身带 |',
-            '',
-            '两个版本都已自带 .NET 运行时，不需要另外安装任何环境。',
-            '',
-            '首次启动会要求填写商城后台「APP 接入管理」生成的三项凭证；也可以从后台绑定页点「打开桌面端」一键唤起并自动绑定。',
-            '',
-            '完整变更记录见 [CHANGELOG.md](https://github.com/fengpei666/Windowsyikefu/blob/master/CHANGELOG.md)。'
-          )
-          $lines -join "`n" | Set-Content -Path notes.md -Encoding UTF8
+          # Release 正文直接取 CHANGELOG 里对应版本的段落（去掉标题行），
+          # 客户端拿它当「更新内容」显示，所以这里写得越清楚，用户看到的越清楚。
+          $notes = ''
+          if (Test-Path CHANGELOG.md) {
+            $md = Get-Content CHANGELOG.md -Raw -Encoding UTF8
+            $pattern = "(?ms)^##\s*\[$([regex]::Escape($version))\]\s*[^\n]*\n(.*?)(?=^##\s*\[|\z)"
+            $m = [regex]::Match($md, $pattern)
+            if ($m.Success) { $notes = $m.Groups[1].Value.Trim() }
+          }
+          if ([string]::IsNullOrWhiteSpace($notes)) {
+            $notes = "版本 $version，完整变更记录见 [CHANGELOG.md](https://github.com/fengpei666/Windowsyikefu/blob/master/CHANGELOG.md)。"
+          }
+          $notes | Set-Content -Path notes.md -Encoding UTF8
+
+          # 客户端按标题前缀判断是否强制更新
+          $title = if ($force) { "[强制] $tag" } else { $tag }
 
           $assets = @('installer/kefu_setup.exe', 'dist/Windowsyikefu.exe')
 
           # release 已存在（重建 tag 的情况）就更新说明与资产，否则新建
           gh release view $tag *> $null
           if ($LASTEXITCODE -eq 0) {
-            gh release edit $tag --title $tag --notes-file notes.md
+            gh release edit $tag --title $title --notes-file notes.md
             gh release upload $tag @assets --clobber
           } else {
-            gh release create $tag @assets --title $tag --notes-file notes.md
+            gh release create $tag @assets --title $title --notes-file notes.md
           }
-          Write-Host "Release $tag 已就绪"
+          Write-Host "Release $tag 已就绪（标题：$title）"
